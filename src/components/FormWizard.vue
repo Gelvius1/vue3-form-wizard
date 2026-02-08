@@ -544,22 +544,21 @@ let routeWatcher: any = null;
 
 const setupRouteWatching = () => {
   const instance = getCurrentInstance();
-  const router = instance?.appContext.config.globalProperties.$router;
-  const route = instance?.appContext.config.globalProperties.$route;
+  if (!instance) return;
 
-  if (router && route) {
-    // Watch for route changes
-    routeWatcher = watch(
-      () => route.path,
-      (newPath) => {
-        currentRoute.value = newPath;
-        checkRouteChange(newPath);
-      },
-      { immediate: true }
-    );
-  } else {
-    console.warn('Vue Router not detected. Route-based navigation will not work.');
-  }
+  const router = instance.appContext.config.globalProperties.$router;
+  const route = instance.appContext.config.globalProperties.$route;
+
+  if (!router || !route) return;
+
+  routeWatcher = watch(
+    () => route.path,
+    (newPath) => {
+      currentRoute.value = newPath;
+      checkRouteChange(newPath);
+    },
+    { immediate: true }
+  );
 };
 
 // Lifecycle
